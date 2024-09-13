@@ -7,8 +7,8 @@ import org.example.exceptions.NotExistFileException;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Map;
+
+@SuppressWarnings("all")
 
 public class Test {
     //读取文件后得到的文本
