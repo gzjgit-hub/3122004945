@@ -6,7 +6,11 @@ import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.util.StrUtil;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.seg.common.Term;
+import org.example.exceptions.FileAnalyseException;
+import org.example.exceptions.HashException;
+import org.example.exceptions.NotExistFileException;
 
+import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 public class Main {
     private static final int ARGS_COUNT = 3;
     private static final int HASH_BIT = 128;
+    public static final int SHORT_WORD_LENGTH = 3;
 
     public static void main(String[] args) {
         if (args.length != ARGS_COUNT) {
@@ -28,9 +33,9 @@ public class Main {
         String originStr = null;
         String compareStr = null;
         try {
-            originStr = FileUtil.readUtf8String(args[0]);
-            compareStr = FileUtil.readUtf8String(args[1]);
-        } catch (IORuntimeException e) {
+            originStr = readFile(args[0]);
+            compareStr = readFile(args[1]);
+        } catch (IORuntimeException | NotExistFileException e) {
             e.printStackTrace();
         }
         Map<String, Integer> originMap = null;
@@ -62,12 +67,37 @@ public class Main {
                 "对比文件：" + args[1] + "\n" +
                 format + "\n" +
                 "比较时间为：" + DateUtil.now() + "\n";
-        ;
-        FileUtil.appendString(writeFileContent, args[2], "utf-8");
+        try {
+            writeFile(writeFileContent, args[2]);
+        } catch (NotExistFileException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static Map<String, Integer> analyseText(String text) {
+    public static void writeFile(String content, String filePath) throws NotExistFileException {
+        try {
+            FileUtil.appendString(content, filePath, "utf-8");
+        } catch (IORuntimeException e) {
+            throw new NotExistFileException("该路径的文件不存在");
+        }
+    }
+
+    public static String readFile(String filePath) throws NotExistFileException {
+        try {
+            return FileUtil.readUtf8String(filePath);
+        } catch (IORuntimeException e) {
+            throw new NotExistFileException("该路径的文件不存在");
+        }
+    }
+
+    public static Map<String, Integer> analyseText(String text) throws FileAnalyseException {
+        if (text == null || StrUtil.isBlank(text) || StrUtil.isEmpty(text)) {
+            throw new FileAnalyseException("文件解析异常，解析内容为空");
+        }
         List<String> keyList = HanLP.extractKeyword(text, text.length());
+        if (keyList.size() <= SHORT_WORD_LENGTH) {
+            throw new FileAnalyseException("文件解析异常，关键词太少");
+        }
         List<Term> termList = HanLP.segment(text);
         List<String> allWords = termList.stream().map(term -> term.word).collect(Collectors.toList());
         Map<String, Integer> wordCountMap = new HashMap<>(keyList.size());
@@ -83,7 +113,12 @@ public class Main {
             mergeHash[i] = 0;
         }
         wordCountMap.forEach((word, count) -> {
-            String hash = wordHash(word);
+            String hash = null;
+            try {
+                hash = wordHash(word);
+            } catch (HashException e) {
+                throw new RuntimeException(e);
+            }
             int[] hashArray = new int[HASH_BIT];
             for (int i = 0; i < hash.length(); i++) {
                 hashArray[i] = hash.charAt(i) == '1' ? count : -1 * count;
@@ -100,7 +135,10 @@ public class Main {
     }
 
 
-    public static String wordHash(String word) {
+    public static String wordHash(String word) throws HashException {
+        if (word == null || StrUtil.isBlank(word) || StrUtil.isEmpty(word)) {
+            throw new HashException("词语为空");
+        }
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("MD5");
@@ -117,6 +155,9 @@ public class Main {
         for (int i = 0; i < hash.length(); i++) {
             strTemp = "0000" + Integer.toBinaryString(Integer.parseInt(hash.substring(i, i + 1), 16));
             finalHash.append(strTemp.substring(strTemp.length() - 4));
+        }
+        if (finalHash.length() != HASH_BIT) {
+            throw new HashException("hash值长度不为128");
         }
         return finalHash.toString();
     }
