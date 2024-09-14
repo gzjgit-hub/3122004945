@@ -17,15 +17,15 @@ public class Test {
     static String originSentence = "今天是星期天，天气晴，今天晚上我要去看电影。";
     static String compareSentence = "今天是周天，天气晴朗，我晚上要去看电影。";
     //比对结果写入的文件
-    static String writeFilePath = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig_ans.txt";
+    static String writeFilePath ="C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig_ans.txt";
     //原文件
-    static String OrigFilePath = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig.txt";
+    static String OrigFilePath = "C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig.txt";
     //5个比对文件
-    static String CopyFilePath1 = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig_0.8_add.txt";
-    static String CopyFilePath2 = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig_0.8_del.txt";
-    static String CopyFilePath3 = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig_0.8_dis_1.txt";
-    static String CopyFilePath4 = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig_0.8_dis_10.txt";
-    static String CopyFilePath5 = "C:\\Users\\86136\\Desktop\\TextSimilarityProject\\orig_0.8_dis_15.txt";
+    static String CopyFilePath1 = "C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig_0.8_add.txt";
+    static String CopyFilePath2 = "C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig_0.8_del.txt";
+    static String CopyFilePath3 = "C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig_0.8_dis_1.txt";
+    static String CopyFilePath4 = "C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig_0.8_dis_10.txt";
+    static String CopyFilePath5 = "C:\\Users\\86136\\Desktop\\3122004945\\src\\test\\java\\org\\example\\orig_0.8_dis_15.txt";
 
     /**
      * 测试写入文件
